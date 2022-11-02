@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { SITE_URL } from "../../lib/constants"
 import {
   CommonSecondaryTextCss,
   CoolSecondaryLink
@@ -11,12 +12,15 @@ const StyledContainer = styled.div`
   margin-top: 1rem;
 `;
 
+const writeUsTemplate = `mailto:m.mastrodonato+lordonetto@gmail.com?subject=Greetings!&body=Dear Marco,%0D%0A%0D%0A[insert cute message here] 😍`
+const tellAFriendText = `mailto:?subject=A cool net salary calculator&body=Hey, %0D%0A%0D%0Amaybe it can come useful to you 🙂 %0D%0A%0D%0A ${SITE_URL}`
+
 export default function Footer() {
   return (
     <StyledContainer>
       <div>
         Developed by&nbsp;
-        <CoolSecondaryLink href="mailto:m.mastrodonato+lordonetto@gmail.com?subject=Greetings!&body=Dear Marco,%0D%0A%0D%0A[insert cute message here] 😍">
+        <CoolSecondaryLink href={writeUsTemplate}>
           Marco Mastrodonato
         </CoolSecondaryLink>
         &nbsp;with&nbsp;
@@ -25,7 +29,7 @@ export default function Footer() {
         </span>
       </div>
       <div>
-        <CoolSecondaryLink href="mailto:?subject=A cool net salary calculator&body=Hey, %0D%0A%0D%0Amaybe it can come useful to you 🙂 %0D%0A%0D%0A https://zmg9pg.csb.app/">
+        <CoolSecondaryLink href={tellAFriendText}>
           Tell a friend
         </CoolSecondaryLink>
       </div>
