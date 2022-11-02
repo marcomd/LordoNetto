@@ -1,37 +1,44 @@
-interface Rate { amount: number; percentage: number }
+// This module contains only calculations related to freelancers
 
-const calculateTaxAmount = (...args: [
-  taxableAmount: number, 
-  rates: Rate[]
-]) => {
-  const [taxableAmount, rates] = args
+interface Rate {
+  amount: number;
+  percentage: number;
+}
+
+const calculateTaxAmount = (
+  ...args: [taxableAmount: number, rates: Rate[]]
+) => {
+  const [taxableAmount, rates] = args;
   console.log(`CalculateNet gross:${taxableAmount} rates:`, rates);
-  let remainingAmount = taxableAmount
+  let remainingAmount = taxableAmount;
 
-  return rates.map((rate, i) => {
-      const rateAmount = i === (rates.length-1) || remainingAmount < rate.amount ? 
-        remainingAmount : 
-        rate.amount
-      remainingAmount -= rate.amount
-      if (remainingAmount < 0) remainingAmount = 0
-      const rateTaxAmount = rateAmount * rate.percentage / 100
-      console.log(`  rateAmount:${rateAmount} remainingAmount:${remainingAmount} rate:${rate.percentage} rateTaxAmount:${rateTaxAmount}`);
-      return rateTaxAmount
+  return rates
+    .map((rate, i) => {
+      const rateAmount =
+        i === rates.length - 1 || remainingAmount < rate.amount
+          ? remainingAmount
+          : rate.amount;
+      remainingAmount -= rate.amount;
+      if (remainingAmount < 0) remainingAmount = 0;
+      const rateTaxAmount = (rateAmount * rate.percentage) / 100;
+      console.log(
+        `  rateAmount:${rateAmount} remainingAmount:${remainingAmount} rate:${rate.percentage} rateTaxAmount:${rateTaxAmount}`
+      );
+      return rateTaxAmount;
     })
-    .reduce((a,b) => a+b)
+    .reduce((a, b) => a + b);
 };
 
 type TaxesOutcome = [
   netAmount: number,
   taxAmount: number,
-  pensionAmount: number,
-]
+  pensionAmount: number
+];
 
-const calculateTaxes = (...args: [
-    grossAmount: number, 
-    deductibleAmount?: number
-  ]): TaxesOutcome => {
-  const [grossAmount, deductibleAmount=0] = args  
+const calculateTaxes = (
+  ...args: [grossAmount: number, deductibleAmount?: number]
+): TaxesOutcome => {
+  const [grossAmount, deductibleAmount = 0] = args;
 
   //Scaglioni IRPEF 2022	Aliquote IRPEF 2022
   //Fino a 15.000 euro	23 per cento
@@ -42,13 +49,13 @@ const calculateTaxes = (...args: [
     { amount: 15000, percentage: 23 },
     { amount: 13000, percentage: 25 },
     { amount: 12000, percentage: 35 },
-    { amount: Infinity, percentage: 43 }
+    { amount: Infinity, percentage: 43 },
   ];
   const taxableAmount = grossAmount - deductibleAmount;
   const taxAmount = calculateTaxAmount(taxableAmount, rates);
   const pensionAmount = (grossAmount * 26.23) / 100;
   const netAmount = grossAmount - taxAmount - pensionAmount;
-  return [netAmount, taxAmount, pensionAmount] as TaxesOutcome
-}
+  return [netAmount, taxAmount, pensionAmount] as TaxesOutcome;
+};
 
-export { calculateTaxes, TaxesOutcome }
+export { calculateTaxes, type TaxesOutcome };
