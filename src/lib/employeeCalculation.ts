@@ -1,3 +1,5 @@
+// This module contains only calculations related to employees
+
 interface Rate { amount: number; percentage: number }
 
 const calculateTaxAmount = (...args: [
@@ -64,4 +66,4 @@ const calculateTaxes = (...args: [
    } as TaxesOutcome
 }
 
-export { calculateTaxes, TaxesOutcome }
+export { calculateTaxes, type TaxesOutcome }
