@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 const StyledContainer = styled.div`
-  padding: 2rem 0;
+  padding: 1rem 0 3rem;
 `;
 
 const CssCommonInput = css`
@@ -15,13 +15,13 @@ const CssCommonInput = css`
     background-color: rgba(255, 255, 255, 0.8);
   }
   &:focus {
-    background-color: white;
+    background-color: ${(props) => props.theme.primary.color};
   }
 `;
 
 const StyledTextInput = styled.input`
   ${CssCommonInput}
-  border: 1px solid grey;
+  border: 1px solid ${(props) => props.theme.secondary.color};
   max-width: 60%;
 `;
 
@@ -36,9 +36,9 @@ const StyledFormRow = styled.div`
 
 const StyledButton = styled.button`
   ${CssCommonInput}
+  color: ${(props) => props.theme.primary.backgroundColor};
   width: 10rem;
   margin-top: 1rem;
-  color: #591bc5;
   border: none;
   font-weight: 500;
   cursor: pointer;
@@ -49,12 +49,16 @@ const StyledResultContainer = styled.div`
   flex-direction: column;
   font-size: 1.1rem;
   letter-spacing: 0.2rem;
-  border: 1px solid white;
+  border: 1px solid ${(props) => props.theme.primary.color};
   border-radius: 1rem;
   padding: 2rem;
   margin: 1rem auto;
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
+
+  @media only screen and (max-width: 550px) {
+    padding: 1rem 0.3rem;
+  }
 `;
 
 const StyledResultNormalRow = styled.div``;
@@ -70,8 +74,8 @@ export {
   StyledTextInput,
   StyledErrorField,
   StyledFormRow,
-  StyledButton,
   StyledResultContainer,
   StyledResultNormalRow,
-  StyledResultMainRow
+  StyledResultMainRow,
+  StyledButton
 };

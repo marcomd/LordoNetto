@@ -1,54 +1,60 @@
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, useEffect, useRef } from "react";
 import { calculateTaxes, TaxesOutcome } from "../lib/freelanceCalculation";
 import { numberFormatter } from "../lib/utility";
+import { DEBOUNCE_TIMEOUT } from "../lib/constants";
 import {
   checkErrors,
   initialErrors,
   reducerErrors
 } from "../mixins/formErrorsMixins";
+
 import {
   StyledContainer,
   StyledTextInput,
   StyledErrorField,
   StyledFormRow,
-  StyledButton,
   StyledResultContainer,
   StyledResultNormalRow,
   StyledResultMainRow
 } from "./styled/StyledForm";
 
+const initialAmounts: TaxesOutcome = {
+  netAmount: 0,
+  taxAmount: 0,
+  pensionAmount: 0
+};
+
 export default function Form() {
-  const [netAmount, setNetAmount] = useState(0);
-  const [taxAmount, setTaxAmount] = useState(0);
-  const [pensionAmount, setPensionAmount] = useState(0);
+  const [outcomeAmounts, setOutcomeAmounts] = useState(initialAmounts);
+  const [grossAmount, setGrossAmount] = useState(0);
+  const [deductibleAmount, setDeductibleAmount] = useState(0);
+  const refResult = useRef(null);
 
-  const [errors, setErrors] = useReducer(reducerErrors, initialErrors);
+  const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
 
-  // useEffect(() => {
-  //   console.log(`errors`, errors);
-  // }, [errors]);
+  const calculate = (): void => {
+    setOutcomeAmounts(initialAmounts);
 
-  const calculate = (event) => {
-    event.preventDefault();
-    setNetAmount(0);
+    if (!checkErrors({ grossAmount, deductibleAmount, dispatchErrors })) return;
 
-    const grossAmount = event.target.elements.grossAmount.value;
-    const deductibleAmount = event.target.elements.deductibleAmount.value;
-    console.log(
-      `grossAmount:${grossAmount} deductibleAmount:${deductibleAmount}`
-    );
+    const {
+      netAmount,
+      taxAmount,
+      pensionAmount
+    }: TaxesOutcome = calculateTaxes(grossAmount, deductibleAmount);
 
-    if (!checkErrors({ grossAmount, deductibleAmount, setErrors })) return;
-
-    const [netAmount, taxAmount, pensionAmount]: TaxesOutcome = calculateTaxes(
-      grossAmount,
-      deductibleAmount
-    );
-
-    setTaxAmount(taxAmount);
-    setPensionAmount(pensionAmount);
-    setNetAmount(netAmount);
+    setOutcomeAmounts({
+      netAmount,
+      taxAmount,
+      pensionAmount
+    });
   };
+
+  useEffect(() => {
+    if (!grossAmount && !deductibleAmount) return;
+    const debounceCalculate = setTimeout(() => calculate(), DEBOUNCE_TIMEOUT);
+    return () => clearTimeout(debounceCalculate);
+  }, [grossAmount, deductibleAmount]);
 
   return (
     <StyledContainer>
@@ -56,10 +62,16 @@ export default function Form() {
         Calcolo dei saldi del primo anno di attività con partita iva iscritto
         alla gestione separata INPS
       </h3>
-      <form onSubmit={calculate}>
+
+      <form>
         <StyledFormRow>
           <span className="input-symbol input-symbol-euro">
-            <StyledTextInput type="text" id="grossAmount" placeholder="Lordo" />
+            <StyledTextInput
+              type="text"
+              id="grossAmount"
+              placeholder="Lordo"
+              onChange={(e) => setGrossAmount(e.target.value)}
+            />
           </span>
           <StyledErrorField>{errors.grossAmount}</StyledErrorField>
         </StyledFormRow>
@@ -70,27 +82,27 @@ export default function Form() {
               type="text"
               id="deductibleAmount"
               placeholder="Spese detraibili"
+              onChange={(e) => setDeductibleAmount(e.target.value)}
             />
           </span>
           <StyledErrorField>{errors.deductibleAmount}</StyledErrorField>
         </StyledFormRow>
 
-        <StyledFormRow>
-          <StyledButton id="freelanceSubmit">Calcola</StyledButton>
-        </StyledFormRow>
-        {netAmount > 0 && (
+        <div ref={refResult}></div>
+        {outcomeAmounts.netAmount > 0 && (
           <StyledResultContainer>
             <StyledResultNormalRow>
-              IRPEF: {numberFormatter.format(taxAmount)}
+              IRPEF: {numberFormatter.format(outcomeAmounts.taxAmount)}
             </StyledResultNormalRow>
             <StyledResultNormalRow>
-              INPS: {numberFormatter.format(pensionAmount)}
+              INPS: {numberFormatter.format(outcomeAmounts.pensionAmount)}
             </StyledResultNormalRow>
             <StyledResultMainRow>
-              Netto: <b>{numberFormatter.format(netAmount)}</b>
+              Netto: <b>{numberFormatter.format(outcomeAmounts.netAmount)}</b>
             </StyledResultMainRow>
             <StyledResultNormalRow>
-              Netto mese: {numberFormatter.format(netAmount / 12)}
+              Netto mese:{" "}
+              {numberFormatter.format(outcomeAmounts.netAmount / 12)}
             </StyledResultNormalRow>
           </StyledResultContainer>
         )}

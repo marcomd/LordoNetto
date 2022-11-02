@@ -1,6 +1,7 @@
-import React, { useReducer, useState, useCallback, useEffect } from "react";
+import React, { useReducer, useState, useEffect, useRef } from "react";
 import { calculateTaxes, TaxesOutcome } from "../lib/employeeCalculation";
 import { numberFormatter } from "../lib/utility";
+import { DEBOUNCE_TIMEOUT } from "../lib/constants";
 import {
   checkErrors,
   initialErrors,
@@ -11,7 +12,6 @@ import {
   StyledTextInput,
   StyledErrorField,
   StyledFormRow,
-  StyledButton,
   StyledResultContainer,
   StyledResultNormalRow,
   StyledResultMainRow
@@ -20,6 +20,7 @@ import {
 const initialAmounts: TaxesOutcome = {
   netAmount: 0,
   irpefAmount: 0,
+  detractionAmount: 0,
   inpsAmount: 0,
   regionAmount: 0,
   cityAmount: 0
@@ -28,47 +29,47 @@ const initialAmounts: TaxesOutcome = {
 const DEFAULT_SALARY_MONTH = 12;
 
 export default function Form() {
-  const [amounts, setAmounts] = useState(initialAmounts);
+  const [outcomeAmounts, setOutcomeAmounts] = useState(initialAmounts);
   const [grossAmount, setGrossAmount] = useState(0);
   const [salaryMonths, setSalaryMonths] = useState(0);
+  const refResult = useRef(null);
 
-  const [errors, setErrors] = useReducer(reducerErrors, initialErrors);
+  const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
   const salaryMonthsOrDefault = salaryMonths || DEFAULT_SALARY_MONTH;
 
-  const calculate = useCallback((): void => {
-    setAmounts(initialAmounts);
+  const calculate = (): void => {
+    setOutcomeAmounts(initialAmounts);
     console.log(`grossAmount:${grossAmount}`);
-    if (!checkErrors({ grossAmount, salaryMonths, setErrors })) return;
+    if (!checkErrors({ grossAmount, salaryMonths, dispatchErrors })) return;
 
     const {
       netAmount,
       irpefAmount,
+      detractionAmount,
       inpsAmount,
       regionAmount,
       cityAmount
     }: TaxesOutcome = calculateTaxes(grossAmount);
 
-    setAmounts({
+    setOutcomeAmounts({
       netAmount,
       irpefAmount,
+      detractionAmount,
       inpsAmount,
       regionAmount,
       cityAmount
     });
-  }, [grossAmount, salaryMonths]);
+    refResult.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    if (grossAmount || salaryMonths) calculate();
+    if (!grossAmount && !salaryMonths) return;
+    const debounceCalculate = setTimeout(() => calculate(), DEBOUNCE_TIMEOUT);
+    return () => clearTimeout(debounceCalculate);
   }, [grossAmount, salaryMonths]);
 
   return (
     <StyledContainer>
-      <div>
-        Work in progress&nbsp;
-        <span role="img" aria-label="construction">
-          🚧
-        </span>
-      </div>
       <h3>Calcolo stipendio netto</h3>
       <form>
         <StyledFormRow>
@@ -86,37 +87,48 @@ export default function Form() {
         <StyledFormRow>
           <span className="input-symbol input-symbol-calendar">
             <StyledTextInput
-              type="text"
+              type="number"
               id="salaryMonths"
               placeholder="Numero mensilità"
+              defaultValue={DEFAULT_SALARY_MONTH}
               onChange={(e) => setSalaryMonths(e.target.value)}
             />
           </span>
           <StyledErrorField>{errors.salaryMonths}</StyledErrorField>
         </StyledFormRow>
 
-        {amounts.netAmount > 0 && (
+        <div ref={refResult}></div>
+        {outcomeAmounts.netAmount > 0 && (
           <StyledResultContainer>
             <StyledResultNormalRow>
-              IRPEF: {numberFormatter.format(amounts.irpefAmount)}
+              IRPEF: {numberFormatter.format(outcomeAmounts.irpefAmount)}
+              {outcomeAmounts.detractionAmount > 0 ? (
+                <span>
+                  (- {numberFormatter.format(outcomeAmounts.detractionAmount)}{" "}
+                  di detrazioni)
+                </span>
+              ) : (
+                ""
+              )}
             </StyledResultNormalRow>
             <StyledResultNormalRow>
-              INPS: {numberFormatter.format(amounts.inpsAmount)}
+              INPS: {numberFormatter.format(outcomeAmounts.inpsAmount)}
             </StyledResultNormalRow>
             <StyledResultNormalRow>
-              Addizionale regionale:&nbsp;
-              {numberFormatter.format(amounts.regionAmount)}
+              Addizionale regionale:&nbsp; ≃
+              {numberFormatter.format(outcomeAmounts.regionAmount)}
             </StyledResultNormalRow>
             <StyledResultNormalRow>
-              Addizionale comunale: {numberFormatter.format(amounts.cityAmount)}
+              Addizionale comunale:&nbsp; ≃
+              {numberFormatter.format(outcomeAmounts.cityAmount)}
             </StyledResultNormalRow>
             <StyledResultMainRow>
-              Netto: <b>{numberFormatter.format(amounts.netAmount)}</b>
+              Netto: <b>{numberFormatter.format(outcomeAmounts.netAmount)}</b>
             </StyledResultMainRow>
             <StyledResultNormalRow>
               Netto mese (/{salaryMonthsOrDefault}):&nbsp;
               {numberFormatter.format(
-                amounts.netAmount / salaryMonthsOrDefault
+                outcomeAmounts.netAmount / salaryMonthsOrDefault
               )}
             </StyledResultNormalRow>
           </StyledResultContainer>

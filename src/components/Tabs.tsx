@@ -10,11 +10,13 @@ import { createContext, useContext, useState } from "react";
 import styled from "styled-components";
 
 // --- STYLE
-const StyledTabContainer = styled.div``;
+const StyledTabContainer = styled.div`
+  box-sizing: border-box;
+`;
 
 const StyledTabButton = styled.button`
-  padding: 1rem 2rem;
-  width: 30%;
+  padding: 1rem 0;
+  width: 33.3%;
   border-radius: 0.5rem 0.5rem 0 0;
   @media only screen and (max-width: 550px) {
     padding: 0.3rem 0.6rem;
@@ -42,15 +44,15 @@ const StyledTabButton = styled.button`
 
 const StyledTabContent = styled.div`
   background-color: rgba(255, 255, 255, 0.1);
-  padding: 2rem 0;
   border-radius: 0 0 0.5rem 0.5rem;
-  width: 90%;
+
   @media only screen and (max-width: 550px) {
     border-radius: 0.5rem;
     margin-top: 1rem;
-    padding: 1rem 1rem;
+    padding-left: 10px;
+    padding-right: 10px;
   }
-  margin: 0 auto;
+
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 `;
@@ -83,10 +85,21 @@ const TabLink: React.FC<{
 }> = ({ children, to }) => {
   const { activeTabId, setActiveTabId } = useContext(TabsContext);
 
+  function handleClick(): void {
+    setActiveTabId(to);
+    setTimeout(
+      () =>
+        document
+          .querySelector(`#${to}`)
+          ?.scrollIntoView({ behavior: "smooth" }),
+      400
+    );
+  }
+
   return (
     <StyledTabButton
       className={activeTabId === to && "selected"}
-      onClick={() => setActiveTabId(to)}
+      onClick={handleClick}
     >
       {children}
     </StyledTabButton>
@@ -100,7 +113,7 @@ const TabContent: React.FC<{
   const { activeTabId } = useContext(TabsContext);
   if (activeTabId !== id) return null;
 
-  return <StyledTabContent>{children}</StyledTabContent>;
+  return <StyledTabContent id={id}>{children}</StyledTabContent>;
 };
 
 export { Tabs, TabLink, TabContent };

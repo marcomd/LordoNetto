@@ -2,16 +2,16 @@ const checkErrors = ({
   grossAmount,
   deductibleAmount = null,
   salaryMonths = null,
-  setErrors
+  dispatchErrors
 }) => {
   console.log("Reset initialErrors");
-  setErrors({
+  dispatchErrors({
     field: "reset"
   });
 
   let isValid = true;
   if (!grossAmount) {
-    setErrors({
+    dispatchErrors({
       field: "grossAmount",
       error: "Please enter the gross amount!"
     });
@@ -19,7 +19,7 @@ const checkErrors = ({
   }
 
   if (grossAmount && isNaN(grossAmount)) {
-    setErrors({
+    dispatchErrors({
       field: "grossAmount",
       error: "The gross amount must be a number!"
     });
@@ -27,7 +27,7 @@ const checkErrors = ({
   }
 
   if (deductibleAmount && isNaN(deductibleAmount)) {
-    setErrors({
+    dispatchErrors({
       field: "deductibleAmount",
       error: "The deductible amount must be a number!"
     });
@@ -35,18 +35,18 @@ const checkErrors = ({
   }
 
   if (salaryMonths && isNaN(salaryMonths)) {
-    setErrors({
+    dispatchErrors({
       field: "salaryMonths",
-      error: "The salary months must be a number!"
+      error: "Salary months must be a number!"
     });
     isValid = false;
   }
 
-  const validSalaryMonths = [12, 13, 14];
+  const validSalaryMonths = [12, 13, 14, 15];
   if (salaryMonths && !validSalaryMonths.includes(parseInt(salaryMonths))) {
-    setErrors({
+    dispatchErrors({
       field: "salaryMonths",
-      error: `The salary months is not valid, only admitted ${validSalaryMonths}!`
+      error: `Invalid salary months, only allowed ${validSalaryMonths}!`
     });
     isValid = false;
   }
