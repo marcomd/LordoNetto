@@ -56,4 +56,4 @@ const calculateTaxes = (...args: [
   } as TaxesOutcome
 }
 
-export { calculateTaxes, TaxesOutcome }
+export { calculateTaxes, type TaxesOutcome }

@@ -33,7 +33,7 @@ export default function Form() {
   const [outcomeAmounts, setOutcomeAmounts] = useState(initialAmounts);
   const [grossAmount, setGrossAmount] = useState(0);
   const [deductibleAmount, setDeductibleAmount] = useState(0);
-  const refResult = useRef(null);
+  const refResult = useRef<HTMLInputElement>(null);
 
   const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
 
@@ -60,6 +60,7 @@ export default function Form() {
       iresAmount,
       irapAmount
     });
+    refResult.current?.scrollIntoView({ behavior: "smooth" });
   }, [grossAmount, deductibleAmount]);
 
   useEffect(() => {
@@ -78,7 +79,7 @@ export default function Form() {
               type="text"
               id="grossAmount"
               placeholder="Lordo"
-              onChange={(e) => setGrossAmount(e.target.value)}
+              onChange={(e) => setGrossAmount(parseInt(e.target.value))}
             />
           </span>
           <StyledErrorField>{errors.grossAmount}</StyledErrorField>
@@ -90,7 +91,7 @@ export default function Form() {
               type="text"
               id="deductibleAmount"
               placeholder="Spese detraibili"
-              onChange={(e) => setDeductibleAmount(e.target.value)}
+              onChange={(e) => setDeductibleAmount(parseInt(e.target.value))}
             />
           </span>
           <StyledErrorField>{errors.deductibleAmount}</StyledErrorField>

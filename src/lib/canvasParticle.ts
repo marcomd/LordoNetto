@@ -1,5 +1,33 @@
-class Particle {
-  constructor(x, y, ctx, mouse) {
+interface MouseAttributes {
+  x: number;
+  y: number;
+  radius: number;
+}
+
+interface IParticle {
+  x: number;
+  y: number;
+  size: number;
+  baseX: number;
+  baseY: number;
+  density: number;
+  ctx: CanvasRenderingContext2D;
+  mouse: MouseAttributes;
+  draw(): void;
+  update(): void;
+}
+
+class Particle implements IParticle {
+  x: number;
+  y: number;
+  size: number;
+  baseX: number;
+  baseY: number;
+  density: number;
+  ctx: CanvasRenderingContext2D;
+  mouse: MouseAttributes;
+
+  constructor(x: number, y: number, ctx: CanvasRenderingContext2D, mouse: MouseAttributes) {
     this.x = x;
     this.y = y;
     this.size = 2;
@@ -45,4 +73,4 @@ class Particle {
   }
 }
 
-export { Particle };
+export { Particle, type IParticle, type MouseAttributes };

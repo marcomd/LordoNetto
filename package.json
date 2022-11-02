@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A simple page to calculate italian net salary from gross",
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

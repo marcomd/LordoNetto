@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -25,16 +25,18 @@ const StyledApp = styled.div`
 
 // --- CODE ---
 export default function App() {
+  const media: MediaQueryList = useMemo(() => {
+    return window.matchMedia("(max-width: 580px)")
+  }, [window.innerWidth, window.innerHeight]) 
+
   const [mobile, setMobile] = useState(
-    window.matchMedia("(max-width: 580px)").matches
+    media.matches
   );
 
   useEffect(() => {
-    window
-      .matchMedia("(max-width: 580px)")
+    media
       .addEventListener("change", (e) => setMobile(e.matches));
-    return () =>
-      window.removeEventListener("change", (e) => setMobile(e.matches));
+    return () => media.removeEventListener("change", (e) => setMobile(e.matches));
   }, []);
 
   return (

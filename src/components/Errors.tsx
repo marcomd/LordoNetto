@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { FallbackProps } from "react-error-boundary";
 
 const ErrorDiv = styled.div`
   color: red;
@@ -6,7 +7,7 @@ const ErrorDiv = styled.div`
   font-size: 1.2rem;
 `;
 
-function GenericErrorFallback({ error }) {
+function GenericErrorFallback({ error }: FallbackProps) {
   return (
     <ErrorDiv>
       <p>Something went wrong!</p>

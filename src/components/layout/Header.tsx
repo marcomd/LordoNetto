@@ -18,7 +18,7 @@ export default function Header({ mobile }: Props) {
       {mobile ? (
         <h1>Lordo ➟ Netto</h1>
       ) : (
-        <TitleCanvas mobile={mobile}>Lordo → Netto</TitleCanvas>
+        <TitleCanvas>Lordo → Netto</TitleCanvas>
       )}
     </StyledContainer>
   );

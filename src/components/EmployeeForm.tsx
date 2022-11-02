@@ -32,7 +32,7 @@ export default function Form() {
   const [outcomeAmounts, setOutcomeAmounts] = useState(initialAmounts);
   const [grossAmount, setGrossAmount] = useState(0);
   const [salaryMonths, setSalaryMonths] = useState(0);
-  const refResult = useRef(null);
+  const refResult = useRef<HTMLInputElement>(null);
 
   const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
   const salaryMonthsOrDefault = salaryMonths || DEFAULT_SALARY_MONTH;
@@ -78,7 +78,7 @@ export default function Form() {
               type="text"
               id="grossAmount"
               placeholder="Lordo"
-              onChange={(e) => setGrossAmount(e.target.value)}
+              onChange={(e) => setGrossAmount(parseInt(e.target.value))}
             />
           </span>
           <StyledErrorField>{errors.grossAmount}</StyledErrorField>
@@ -91,7 +91,7 @@ export default function Form() {
               id="salaryMonths"
               placeholder="Numero mensilità"
               defaultValue={DEFAULT_SALARY_MONTH}
-              onChange={(e) => setSalaryMonths(e.target.value)}
+              onChange={(e) => setSalaryMonths(parseInt(e.target.value))}
             />
           </span>
           <StyledErrorField>{errors.salaryMonths}</StyledErrorField>

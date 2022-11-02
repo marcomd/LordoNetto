@@ -1,9 +1,16 @@
+interface Parameters {
+  grossAmount: number;
+  deductibleAmount?: number;
+  salaryMonths?: number;
+  dispatchErrors: Function;
+}
+
 const checkErrors = ({
   grossAmount,
-  deductibleAmount = null,
-  salaryMonths = null,
+  deductibleAmount,
+  salaryMonths,
   dispatchErrors
-}) => {
+}: Parameters) => {
   console.log("Reset initialErrors");
   dispatchErrors({
     field: "reset"
@@ -43,7 +50,7 @@ const checkErrors = ({
   }
 
   const validSalaryMonths = [12, 13, 14, 15];
-  if (salaryMonths && !validSalaryMonths.includes(parseInt(salaryMonths))) {
+  if (salaryMonths && !validSalaryMonths.includes(salaryMonths)) {
     dispatchErrors({
       field: "salaryMonths",
       error: `Invalid salary months, only allowed ${validSalaryMonths}!`
@@ -54,21 +61,40 @@ const checkErrors = ({
   return isValid;
 };
 
-const initialErrors = {
+enum ErrorsActionKinds {
+  GROSS_AMOUNT = 'grossAmount',
+  DEDUCTIBLE_AMOUNT = 'deductibleAmount',
+  SALARY_MONTHS = 'salaryMonths',
+  RESET = 'reset',
+}
+
+interface ErrorsState {
+  grossAmount: string | null;
+  deductibleAmount: string | null;
+  salaryMonths: string | null;
+}
+
+const initialErrors: ErrorsState = {
   grossAmount: null,
   deductibleAmount: null,
   salaryMonths: null
 };
 
-function reducerErrors(errors, action) {
+// An interface for our actions
+interface ErrorsAction {
+  field: ErrorsActionKinds;
+  error: string;
+}
+
+function reducerErrors(errors: ErrorsState, action: ErrorsAction) {
   switch (action.field) {
-    case "grossAmount":
+    case ErrorsActionKinds.GROSS_AMOUNT:
       return { ...errors, grossAmount: action.error };
-    case "deductibleAmount":
+    case ErrorsActionKinds.DEDUCTIBLE_AMOUNT:
       return { ...errors, deductibleAmount: action.error };
-    case "salaryMonths":
+    case ErrorsActionKinds.SALARY_MONTHS:
       return { ...errors, salaryMonths: action.error };
-    case "reset":
+    case ErrorsActionKinds.RESET:
       return initialErrors;
     default:
       throw new Error();

@@ -4,21 +4,20 @@ interface Rate {
   detractionNotOver: number;
 }
 
+type CalculateTaxAmountOutcome = [irpefAmount: number, detractionAmount: number]
+
 const calculateTaxAmount = (...args: [
   taxableAmount: number, 
   rates: Rate[]
-]): [irpefAmount: number, detractionAmount: number] => {
+]): CalculateTaxAmountOutcome => {
   const [taxableAmount, rates] = args
   console.log(`CalculateNet gross:${taxableAmount} rates:`, rates);
   let remainingAmount = taxableAmount
   let rateLimitAmount = 0
-  const [
-    irpefAmount, 
-    detractionAmount
-  ] = rates.map((rate, i) => {
+  const [ irpefAmount, detractionAmount] = rates.map((rate, i) => {
       if (taxableAmount <= rateLimitAmount) {
         console.log(`  rate:${rateLimitAmount} rate:${rate.percentage} --skipped`);
-        return
+        return [0,0]
       }
       rateLimitAmount += rate.amount
 
@@ -33,12 +32,12 @@ const calculateTaxAmount = (...args: [
       console.log(`  rate:${rateLimitAmount} rateAmount:${rateAmount} remainingAmount:${remainingAmount} rate:${rate.percentage} rateTaxAmount:${rateTaxAmount} finalRateTaxAmount:${finalRateTaxAmount} detraction:${detraction}`);
       return [finalRateTaxAmount, detraction]
     })
-    .reduce((total, cur) => {
+    .reduce(([totalIrpef, totalDetraction], [curIrpef, curDetraction]) => {
       //console.log("reduce", total, cur)
       // It sums taxes and detractions
-      return cur ? [(total[0]+cur[0]), (total[1]+cur[1])] : total
+      return [(totalIrpef+curIrpef), (totalDetraction+curDetraction)]
     })
-    return [irpefAmount, detractionAmount]
+  return [irpefAmount, detractionAmount]
 };
 
 type TaxesOutcome = {
@@ -116,4 +115,4 @@ const calculateTaxes = (...args: [
    } as TaxesOutcome
 }
 
-export { calculateTaxes, TaxesOutcome }
+export { calculateTaxes, type TaxesOutcome }

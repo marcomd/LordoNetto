@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React, { useEffect, useRef } from "react";
-import { Particle } from "../lib/canvasParticle";
+import { Particle, IParticle, MouseAttributes } from "../lib/canvasParticle";
 
 const StyledCanvasContainer = styled.div`
   text-align: center;
@@ -14,16 +14,18 @@ const StyledCanvasTitle = styled.canvas`
 `;
 
 interface Props {
-  children: React.ReactNode;
+  children: string;
 }
 
-export default function Canvas({ children }: Props) {
-  const refCanvas = useRef(null);
+export default function TitleCanvas({ children }: Props) {
+  const refCanvas = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = refCanvas.current;
+    if (!canvas) return
     const ctx = canvas.getContext("2d");
-    let particleArray = [];
+    if (!ctx) return
+    let particleArray: IParticle[] = [];
 
     ctx.fillStyle = "white";
     ctx.font = "8px Verdana";
@@ -32,13 +34,13 @@ export default function Canvas({ children }: Props) {
     //ctx.strokeRect(0, 0, 200, 100);
     const textCoordinates = ctx.getImageData(0, 0, 200, 100);
 
-    const mouse = {
-      x: null,
-      y: null,
+    const mouse: MouseAttributes = {
+      x: 0,
+      y: 0,
       radius: 50
     };
 
-    const handleMouseMove = (event) => {
+    const handleMouseMove = (event: MouseEvent) => {
       const { x: canvasX, y: canvasY } = canvas.getBoundingClientRect();
       mouse.x = event.x - canvasX;
       mouse.y = event.y - canvasY;
@@ -48,6 +50,7 @@ export default function Canvas({ children }: Props) {
     window.addEventListener("mousemove", handleMouseMove);
 
     function initArray() {
+      if (!ctx) return
       particleArray = [];
       let adjustX = 1;
       let adjustY = 3;
@@ -70,6 +73,7 @@ export default function Canvas({ children }: Props) {
     initArray();
 
     function animate() {
+      if (!ctx || !canvas) return
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (let i = 0; i < particleArray.length; i++) {
         particleArray[i].draw();
