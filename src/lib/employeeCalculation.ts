@@ -1,8 +1,10 @@
-interface Rate { 
-  amount: number; 
-  percentage: number;
-  detractionNotOver: number;
-}
+import { 
+  Rate, 
+  getRates, 
+  getOtherDetractions,
+  SpouseDetraction,
+  getSpouseDetractions,
+} from "./employee/employeeData"
 
 type CalculateTaxAmountOutcome = [irpefAmount: number, detractionAmount: number]
 
@@ -50,37 +52,13 @@ type TaxesOutcome = {
 }
 
 const calculateTaxes = (...args: [
-    grossAmount: number
+    grossAmount: number,
+    dependentSpouse: boolean,
   ]): TaxesOutcome => {
-  const [grossAmount] = args  
+  console.log("Employee calculateTaxes")
+  const [grossAmount, dependentSpouse] = args  
 
-  //Scaglioni IRPEF 2022	Aliquote IRPEF 2022
-  //Fino a 15.000 euro	23 per cento
-  //Oltre 15.000 euro e fino a 28.000 euro	25 per cento
-  //Oltre 28.000 euro e fino a 50.000 euro	35 per cento
-  //Oltre 50.000 euro	43 per cento
-  const rates: Rate[] = [
-    { 
-      amount: 15000, 
-      percentage: 23, 
-      detractionNotOver: 1880 
-    },
-    { 
-      amount: 13000, 
-      percentage: 25, 
-      detractionNotOver: 1910 + 1190 * (28000-grossAmount) / 13000
-    },
-    { 
-      amount: 22000, 
-      percentage: 35, 
-      detractionNotOver: 1910 * (50000-grossAmount) / 22000
-    },
-    { amount: Infinity, percentage: 43, detractionNotOver: 0 }
-  ];
-  const otherDetractions = [
-    { fromAmount: 25001, toAmount: 35000, detraction: 65 }
-  ]
-
+  const rates: Rate[] = getRates(grossAmount);
   const inpsAmount = (grossAmount * 9.19) / 100;
   const taxableAmount = grossAmount - inpsAmount;
   const [
@@ -88,14 +66,30 @@ const calculateTaxes = (...args: [
     detractionAmount
   ] = calculateTaxAmount(taxableAmount, rates);
 
+  // --- SPOUSE DETRACTIONS
+  const spouseDetractions: SpouseDetraction[] = dependentSpouse ?
+  getSpouseDetractions(grossAmount) :
+  []
+  let spouseDetractionAmount = 0
+  spouseDetractions.forEach(d => {
+    if (grossAmount >= d.fromAmount && grossAmount <= d.toAmount) {
+      const rateDetraction = d.detraction()
+      if (rateDetraction > 0) spouseDetractionAmount += d.detraction()
+    }
+  })
+
+  // OTHER DETRACTIONS
+  const otherDetractions = getOtherDetractions();
   let otherDetractionAmount = 0
   otherDetractions.forEach(d => {
     if (grossAmount >= d.fromAmount && grossAmount <= d.toAmount) {
       otherDetractionAmount += d.detraction
     }
   })
-  const totalDetractionAmount = detractionAmount + otherDetractionAmount
 
+  const totalDetractionAmount = detractionAmount + 
+    otherDetractionAmount + 
+    spouseDetractionAmount
   
   const regionAmount = (taxableAmount * 1.50) / 100;
   const cityAmount = (taxableAmount * 0.80) / 100;

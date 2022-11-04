@@ -1,0 +1,13 @@
+{
+  "lang": "it",
+  "dir": "ltr",
+  "name": "Stipendio Lordo ➟ Netto",
+  "short_name": "Lordo ➟ Netto",
+  "scope": "/",
+  "id": "lordo-netto",
+  "start_url": "/index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "theme_color": "white",
+  "background_color": "#591bc5"
+}

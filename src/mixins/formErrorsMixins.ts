@@ -2,6 +2,7 @@ interface Parameters {
   grossAmount: number;
   deductibleAmount?: number;
   salaryMonths?: number;
+  dependentSpouse?: boolean;
   dispatchErrors: Function;
 }
 
@@ -9,6 +10,7 @@ const checkErrors = ({
   grossAmount,
   deductibleAmount,
   salaryMonths,
+  dependentSpouse,
   dispatchErrors
 }: Parameters) => {
   console.log("Reset initialErrors");
@@ -72,12 +74,14 @@ interface ErrorsState {
   grossAmount: string | null;
   deductibleAmount: string | null;
   salaryMonths: string | null;
+  dependentSpouse: string | null;
 }
 
 const initialErrors: ErrorsState = {
   grossAmount: null,
   deductibleAmount: null,
-  salaryMonths: null
+  salaryMonths: null,
+  dependentSpouse: null
 };
 
 // An interface for our actions

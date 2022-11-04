@@ -17,6 +17,8 @@ import {
   StyledResultMainRow
 } from "./styled/StyledForm";
 
+import CheckBox from "./base/Checkbox"
+
 const initialAmounts: TaxesOutcome = {
   netAmount: 0,
   irpefAmount: 0,
@@ -32,6 +34,7 @@ export default function Form() {
   const [outcomeAmounts, setOutcomeAmounts] = useState(initialAmounts);
   const [grossAmount, setGrossAmount] = useState(0);
   const [salaryMonths, setSalaryMonths] = useState(0);
+  const [dependentSpouse, setDependentSpouse] = useState(false);
   const refResult = useRef<HTMLInputElement>(null);
 
   const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
@@ -49,7 +52,7 @@ export default function Form() {
       inpsAmount,
       regionAmount,
       cityAmount
-    }: TaxesOutcome = calculateTaxes(grossAmount);
+    }: TaxesOutcome = calculateTaxes(grossAmount, dependentSpouse);
 
     setOutcomeAmounts({
       netAmount,
@@ -67,6 +70,11 @@ export default function Form() {
     const debounceCalculate = setTimeout(() => calculate(), DEBOUNCE_TIMEOUT);
     return () => clearTimeout(debounceCalculate);
   }, [grossAmount, salaryMonths]);
+
+  useEffect(() => {
+    if (!grossAmount && !dependentSpouse) return;
+    calculate()
+  }, [dependentSpouse]);
 
   return (
     <StyledContainer>
@@ -96,6 +104,16 @@ export default function Form() {
             />
           </span>
           <StyledErrorField>{errors.salaryMonths}</StyledErrorField>
+        </StyledFormRow>
+
+        <StyledFormRow>
+          <CheckBox
+            checked={dependentSpouse}
+            onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+              setDependentSpouse(e.currentTarget.checked)
+            }}
+          >Coniuge a carico</CheckBox>
+          <StyledErrorField>{errors.dependentSpouse}</StyledErrorField>
         </StyledFormRow>
 
         {outcomeAmounts.netAmount > 0 && (
