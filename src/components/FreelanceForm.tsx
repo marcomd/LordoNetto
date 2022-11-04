@@ -65,6 +65,7 @@ export default function Form() {
       </h3>
 
       <form>
+        <div ref={refResult}></div>
         <StyledFormRow>
           <span className="input-symbol input-symbol-euro">
             <StyledTextInput
@@ -89,7 +90,6 @@ export default function Form() {
           <StyledErrorField>{errors.deductibleAmount}</StyledErrorField>
         </StyledFormRow>
 
-        <div ref={refResult}></div>
         {outcomeAmounts.netAmount > 0 && (
           <StyledResultContainer>
             <StyledResultNormalRow>

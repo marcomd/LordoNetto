@@ -56,7 +56,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 140vh;
   overflow: hidden;
   z-index: -1;
 }
@@ -168,7 +168,7 @@ body {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-1500px) rotate(600deg);
+    transform: translateY(-2000px) rotate(600deg);
   }
 }
 @keyframes square {
@@ -176,7 +176,7 @@ body {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-1500px) rotate(600deg);
+    transform: translateY(-2000px) rotate(600deg);
   }
 }
 
