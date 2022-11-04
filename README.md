@@ -18,7 +18,8 @@ https://lordo-netto.vercel.app
 - Typescript
 - Css and Styled Components
 - Canvas
-- No external plugins
+- ~~No external plugins~~ (Damn, I lost this achivement)
+  - React-share to share url on most popular social networks
 
 ## Experimental
 
