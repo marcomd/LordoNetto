@@ -28,7 +28,7 @@ export default function TitleCanvas({ children }: Props) {
     let particleArray: IParticle[] = [];
 
     ctx.fillStyle = "white";
-    ctx.font = "10px Verdana";
+    ctx.font = "9px Verdana";
     ctx.fillText(children, -1, 7);
     //ctx.strokeStyle = "white";
     //ctx.strokeRect(0, 0, 200, 100);
