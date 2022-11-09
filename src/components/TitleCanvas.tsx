@@ -28,8 +28,8 @@ export default function TitleCanvas({ children }: Props) {
     let particleArray: IParticle[] = [];
 
     ctx.fillStyle = "white";
-    ctx.font = "8px Verdana";
-    ctx.fillText(children, 0, 7);
+    ctx.font = "10px Verdana";
+    ctx.fillText(children, -1, 7);
     //ctx.strokeStyle = "white";
     //ctx.strokeRect(0, 0, 200, 100);
     const textCoordinates = ctx.getImageData(0, 0, 200, 100);
@@ -84,11 +84,11 @@ export default function TitleCanvas({ children }: Props) {
     animate();
 
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [children]);
 
   return (
     <StyledCanvasContainer>
-      <StyledCanvasTitle ref={refCanvas} width="600" height="130" />
+      <StyledCanvasTitle ref={refCanvas} width="650" height="130" />
     </StyledCanvasContainer>
   );
 }

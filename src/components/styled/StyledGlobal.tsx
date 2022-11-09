@@ -1,5 +1,7 @@
 import styled, { css } from "styled-components";
 
+const MOBILE_LIMIT_WIDTH = "550px"
+
 const CommonPrimaryTextCss = css`
   color: ${(props) => props.theme.primary.color};
 `;
@@ -28,5 +30,6 @@ export {
   CommonPrimaryTextCss,
   CommonSecondaryTextCss,
   CoolPrimaryLink,
-  CoolSecondaryLink
+  CoolSecondaryLink,
+  MOBILE_LIMIT_WIDTH,
 };

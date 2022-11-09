@@ -63,7 +63,7 @@ const calculateTaxes = (...args: [
   const taxableAmount = grossAmount - inpsAmount;
   const [
     irpefAmount, 
-    detractionAmount
+    taxDetractionAmount
   ] = calculateTaxAmount(taxableAmount, rates);
 
   // --- SPOUSE DETRACTIONS
@@ -87,22 +87,29 @@ const calculateTaxes = (...args: [
     }
   })
 
-  const totalDetractionAmount = detractionAmount + 
+  const totalDetractionAmount = taxDetractionAmount + 
     otherDetractionAmount + 
     spouseDetractionAmount
   
+  // Not sure but detractions cannot exceed taxes
+  const detractionAmount = totalDetractionAmount > irpefAmount ? irpefAmount : totalDetractionAmount
+
   const regionAmount = (taxableAmount * 1.50) / 100;
   const cityAmount = (taxableAmount * 0.80) / 100;
-  const netAmount = grossAmount - 
+
+  const tmpNetAmount = grossAmount - 
                     irpefAmount +
-                    totalDetractionAmount -
+                    detractionAmount -
                     inpsAmount - 
                     regionAmount - 
                     cityAmount;
+  const netAmount = tmpNetAmount > 0 ? tmpNetAmount : 0
+  console.log(`net:${netAmount} irpef:${irpefAmount} taxDetrac:${taxDetractionAmount} otherDetrac:${otherDetractionAmount} spouseDetrac:${spouseDetractionAmount} detraction:${detractionAmount}(from ${totalDetractionAmount}) inps:${inpsAmount} region:${regionAmount} city:${cityAmount}`)
+
   return {
     netAmount, 
     irpefAmount, 
-    detractionAmount: totalDetractionAmount,
+    detractionAmount,
     inpsAmount, 
     regionAmount, 
     cityAmount

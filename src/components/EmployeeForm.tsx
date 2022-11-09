@@ -19,6 +19,8 @@ import {
 
 import CheckBox from "./base/Checkbox"
 
+import { useTranslation } from "react-i18next";
+
 const initialAmounts: TaxesOutcome = {
   netAmount: 0,
   irpefAmount: 0,
@@ -32,18 +34,22 @@ const DEFAULT_SALARY_MONTH = 12;
 
 export default function Form() {
   const [outcomeAmounts, setOutcomeAmounts] = useState(initialAmounts);
-  const [grossAmount, setGrossAmount] = useState(0);
-  const [salaryMonths, setSalaryMonths] = useState(0);
+  const [inGrossAmount, setInGrossAmount] = useState("");
+  const [inSalaryMonths, setInSalaryMonths] = useState("");
+  const grossAmount = parseInt(inGrossAmount);
+  const salaryMonths = parseInt(inSalaryMonths);
   const [dependentSpouse, setDependentSpouse] = useState(false);
   const refResult = useRef<HTMLInputElement>(null);
 
   const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
   const salaryMonthsOrDefault = salaryMonths || DEFAULT_SALARY_MONTH;
 
+  const { t } = useTranslation();
+
   const calculate = (): void => {
     setOutcomeAmounts(initialAmounts);
     console.log(`grossAmount:${grossAmount}`);
-    if (!checkErrors({ grossAmount, salaryMonths, dispatchErrors })) return;
+    if (!checkErrors({ grossAmount, salaryMonths, dispatchErrors, t })) return;
 
     const {
       netAmount,
@@ -66,10 +72,10 @@ export default function Form() {
   };
 
   useEffect(() => {
-    if (!grossAmount && !salaryMonths) return;
+    if (!inGrossAmount && !inSalaryMonths && !outcomeAmounts.netAmount) return;
     const debounceCalculate = setTimeout(() => calculate(), DEBOUNCE_TIMEOUT);
     return () => clearTimeout(debounceCalculate);
-  }, [grossAmount, salaryMonths]);
+  }, [inGrossAmount, inSalaryMonths]);
 
   useEffect(() => {
     if (!grossAmount && !dependentSpouse) return;
@@ -78,16 +84,15 @@ export default function Form() {
 
   return (
     <StyledContainer>
-      <h3>Calcolo stipendio netto</h3>
-      <form>
-        <div ref={refResult}></div>
-        <StyledFormRow>
+      <div ref={refResult}></div>
+      <h3>{t('employee.title')}</h3>
+      <StyledFormRow>
           <span className="input-symbol input-symbol-euro">
             <StyledTextInput
               type="text"
               id="grossAmount"
-              placeholder="Lordo"
-              onChange={(e) => setGrossAmount(parseInt(e.target.value))}
+              placeholder={t('inputs.placeholders.grossAmount')}
+              onChange={(e) => setInGrossAmount(e.target.value)}
             />
           </span>
           <StyledErrorField>{errors.grossAmount}</StyledErrorField>
@@ -98,9 +103,9 @@ export default function Form() {
             <StyledTextInput
               type="number"
               id="salaryMonths"
-              placeholder="Numero mensilità"
+              placeholder={t('inputs.placeholders.salaryMonths')}
               defaultValue={DEFAULT_SALARY_MONTH}
-              onChange={(e) => setSalaryMonths(parseInt(e.target.value))}
+              onChange={(e) => setInSalaryMonths(e.target.value)}
             />
           </span>
           <StyledErrorField>{errors.salaryMonths}</StyledErrorField>
@@ -112,7 +117,7 @@ export default function Form() {
             onClick={(e: React.MouseEvent<HTMLInputElement>) => {
               setDependentSpouse(e.currentTarget.checked)
             }}
-          >Coniuge a carico</CheckBox>
+          >{t('inputs.placeholders.dependentSpouse')}</CheckBox>
           <StyledErrorField>{errors.dependentSpouse}</StyledErrorField>
         </StyledFormRow>
 
@@ -133,25 +138,24 @@ export default function Form() {
               INPS: {numberFormatter.format(outcomeAmounts.inpsAmount)}
             </StyledResultNormalRow>
             <StyledResultNormalRow>
-              Addizionale regionale:&nbsp; ≃
+              {t('result.regionTaxAmount')}:&nbsp; ≃
               {numberFormatter.format(outcomeAmounts.regionAmount)}
             </StyledResultNormalRow>
             <StyledResultNormalRow>
-              Addizionale comunale:&nbsp; ≃
+              {t('result.cityTaxAmount')}:&nbsp; ≃
               {numberFormatter.format(outcomeAmounts.cityAmount)}
             </StyledResultNormalRow>
             <StyledResultMainRow>
-              Netto: <b>{numberFormatter.format(outcomeAmounts.netAmount)}</b>
+              {t('result.netAmount')}: <b>{numberFormatter.format(outcomeAmounts.netAmount)}</b>
             </StyledResultMainRow>
             <StyledResultNormalRow>
-              Netto mese (/{salaryMonthsOrDefault}):&nbsp;
+              {t('result.netAmountPerMonth')} (/{salaryMonthsOrDefault}):&nbsp;
               {numberFormatter.format(
                 outcomeAmounts.netAmount / salaryMonthsOrDefault
               )}
             </StyledResultNormalRow>
           </StyledResultContainer>
         )}
-      </form>
     </StyledContainer>
   );
 }

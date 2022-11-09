@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { MOBILE_LIMIT_WIDTH } from "./StyledGlobal";
 
 const StyledContainer = styled.div`
   padding: 1rem 0 3rem;
@@ -56,7 +57,7 @@ const StyledResultContainer = styled.div`
   -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
 
-  @media only screen and (max-width: 550px) {
+  @media only screen and (max-width: ${MOBILE_LIMIT_WIDTH}) {
     padding: 1rem 0.3rem;
   }
 `;

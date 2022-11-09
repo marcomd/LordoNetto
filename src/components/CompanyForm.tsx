@@ -23,6 +23,8 @@ import {
   StyledResultMainRow
 } from "./styled/StyledForm";
 
+import { useTranslation } from "react-i18next";
+
 const initialAmounts: TaxesOutcome = {
   netAmount: 0,
   iresAmount: 0,
@@ -36,6 +38,7 @@ export default function Form() {
   const refResult = useRef<HTMLInputElement>(null);
 
   const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
+  const { t } = useTranslation();
 
   // useEffect(() => {
   //   console.log(`errors`, errors);
@@ -48,7 +51,7 @@ export default function Form() {
     //const deductibleAmount = event.target.elements.deductibleAmount.value;
     //console.log(`grossAmount:${grossAmount} deductibleAmount:${deductibleAmount}`);
 
-    if (!checkErrors({ grossAmount, deductibleAmount, dispatchErrors })) return;
+    if (!checkErrors({ grossAmount, deductibleAmount, dispatchErrors, t })) return;
 
     const { netAmount, iresAmount, irapAmount }: TaxesOutcome = calculateTaxes(
       grossAmount,
@@ -71,15 +74,14 @@ export default function Form() {
 
   return (
     <StyledContainer>
-      <h3>Calcolo al netto di IRAP e IRES</h3>
-      <form>
-        <div ref={refResult}></div>
-        <StyledFormRow>
+      <div ref={refResult}></div>
+      <h3>{ t('company.title') }</h3>
+      <StyledFormRow>
           <span className="input-symbol input-symbol-euro">
             <StyledTextInput
               type="text"
               id="grossAmount"
-              placeholder="Lordo"
+              placeholder={t('inputs.placeholders.grossAmount')}
               onChange={(e) => setGrossAmount(parseInt(e.target.value))}
             />
           </span>
@@ -91,7 +93,7 @@ export default function Form() {
             <StyledTextInput
               type="text"
               id="deductibleAmount"
-              placeholder="Spese detraibili"
+              placeholder={t('inputs.placeholders.deductibleAmount')}
               onChange={(e) => setDeductibleAmount(parseInt(e.target.value))}
             />
           </span>
@@ -107,15 +109,14 @@ export default function Form() {
               IRAP: {numberFormatter.format(outcomeAmounts.irapAmount)}
             </StyledResultNormalRow>
             <StyledResultMainRow>
-              Netto: <b>{numberFormatter.format(outcomeAmounts.netAmount)}</b>
+              {t('result.netAmount')}: <b>{numberFormatter.format(outcomeAmounts.netAmount)}</b>
             </StyledResultMainRow>
             <StyledResultNormalRow>
-              Netto mese:{" "}
+              {t('result.netAmountPerMonth')}:&nbsp;
               {numberFormatter.format(outcomeAmounts.netAmount / 12)}
             </StyledResultNormalRow>
           </StyledResultContainer>
         )}
-      </form>
     </StyledContainer>
   );
 }

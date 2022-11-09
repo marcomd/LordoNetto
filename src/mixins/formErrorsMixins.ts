@@ -1,9 +1,12 @@
+import { useTranslation } from "react-i18next";
+
 interface Parameters {
   grossAmount: number;
   deductibleAmount?: number;
   salaryMonths?: number;
   dependentSpouse?: boolean;
   dispatchErrors: Function;
+  t: (name: string, prefix?: string) => string;
 }
 
 const checkErrors = ({
@@ -11,31 +14,38 @@ const checkErrors = ({
   deductibleAmount,
   salaryMonths,
   dependentSpouse,
-  dispatchErrors
+  dispatchErrors,
+  t
 }: Parameters) => {
+  
+
   console.log("Reset initialErrors");
   dispatchErrors({
     field: "reset"
   });
 
   let isValid = true;
-  if (!grossAmount) {
+
+  if (grossAmount && isNaN(grossAmount)) {
+    console.log("inputs.errors.grossAmountNaN", grossAmount)
     dispatchErrors({
       field: "grossAmount",
-      error: "Please enter the gross amount!"
+      error: t('inputs.errors.grossAmountNaN')
     });
     isValid = false;
   }
 
-  if (grossAmount && isNaN(grossAmount)) {
+  if (!grossAmount) {
+    console.log("inputs.errors.grossAmountMissing", grossAmount)
     dispatchErrors({
       field: "grossAmount",
-      error: "The gross amount must be a number!"
+      error: t('inputs.errors.grossAmountMissing')
     });
     isValid = false;
   }
 
   if (deductibleAmount && isNaN(deductibleAmount)) {
+    console.log("inputs.errors.deductibleAmountNaN", deductibleAmount)
     dispatchErrors({
       field: "deductibleAmount",
       error: "The deductible amount must be a number!"
@@ -44,6 +54,7 @@ const checkErrors = ({
   }
 
   if (salaryMonths && isNaN(salaryMonths)) {
+    console.log("inputs.errors.salaryMonthsNaN", salaryMonths)
     dispatchErrors({
       field: "salaryMonths",
       error: "Salary months must be a number!"
@@ -53,6 +64,7 @@ const checkErrors = ({
 
   const validSalaryMonths = [12, 13, 14, 15];
   if (salaryMonths && !validSalaryMonths.includes(salaryMonths)) {
+    console.log("inputs.errors.salaryMonthsInvalid", salaryMonths)
     dispatchErrors({
       field: "salaryMonths",
       error: `Invalid salary months, only allowed ${validSalaryMonths}!`

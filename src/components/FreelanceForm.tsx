@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useEffect, useRef } from "react";
+import { useReducer, useState, useEffect, useRef } from "react";
 import { calculateTaxes, TaxesOutcome } from "../lib/freelanceCalculation";
 import { numberFormatter } from "../lib/utility";
 import { DEBOUNCE_TIMEOUT } from "../lib/constants";
@@ -18,6 +18,8 @@ import {
   StyledResultMainRow
 } from "./styled/StyledForm";
 
+import { useTranslation } from "react-i18next";
+
 const initialAmounts: TaxesOutcome = {
   netAmount: 0,
   taxAmount: 0,
@@ -31,11 +33,12 @@ export default function Form() {
   const refResult = useRef<HTMLInputElement>(null);
 
   const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
+  const { t } = useTranslation();
 
   const calculate = (): void => {
     setOutcomeAmounts(initialAmounts);
 
-    if (!checkErrors({ grossAmount, deductibleAmount, dispatchErrors })) return;
+    if (!checkErrors({ grossAmount, deductibleAmount, dispatchErrors, t })) return;
 
     const {
       netAmount,
@@ -59,55 +62,49 @@ export default function Form() {
 
   return (
     <StyledContainer>
-      <h3>
-        Calcolo dei saldi del primo anno di attività con partita iva iscritto
-        alla gestione separata INPS
-      </h3>
+      <div ref={refResult}></div>
+      <h3>{ t('freelance.title') }</h3>      
+      <StyledFormRow>
+        <span className="input-symbol input-symbol-euro">
+          <StyledTextInput
+            type="text"
+            id="grossAmount"
+            placeholder={t('inputs.placeholders.grossAmount')}
+            onChange={(e) => setGrossAmount(parseInt(e.target.value))}
+          />
+        </span>
+        <StyledErrorField>{errors.grossAmount}</StyledErrorField>
+      </StyledFormRow>
 
-      <form>
-        <div ref={refResult}></div>
-        <StyledFormRow>
-          <span className="input-symbol input-symbol-euro">
-            <StyledTextInput
-              type="text"
-              id="grossAmount"
-              placeholder="Lordo"
-              onChange={(e) => setGrossAmount(parseInt(e.target.value))}
-            />
-          </span>
-          <StyledErrorField>{errors.grossAmount}</StyledErrorField>
-        </StyledFormRow>
+      <StyledFormRow>
+        <span className="input-symbol input-symbol-euro">
+          <StyledTextInput
+            type="text"
+            id="deductibleAmount"
+            placeholder={t('inputs.placeholders.deductibleAmount')}
+            onChange={(e) => setDeductibleAmount(parseInt(e.target.value))}
+          />
+        </span>
+        <StyledErrorField>{errors.deductibleAmount}</StyledErrorField>
+      </StyledFormRow>
 
-        <StyledFormRow>
-          <span className="input-symbol input-symbol-euro">
-            <StyledTextInput
-              type="text"
-              id="deductibleAmount"
-              placeholder="Spese detraibili"
-              onChange={(e) => setDeductibleAmount(parseInt(e.target.value))}
-            />
-          </span>
-          <StyledErrorField>{errors.deductibleAmount}</StyledErrorField>
-        </StyledFormRow>
-
-        {outcomeAmounts.netAmount > 0 && (
-          <StyledResultContainer>
-            <StyledResultNormalRow>
-              IRPEF: {numberFormatter.format(outcomeAmounts.taxAmount)}
-            </StyledResultNormalRow>
-            <StyledResultNormalRow>
-              INPS: {numberFormatter.format(outcomeAmounts.pensionAmount)}
-            </StyledResultNormalRow>
-            <StyledResultMainRow>
-              Netto: <b>{numberFormatter.format(outcomeAmounts.netAmount)}</b>
-            </StyledResultMainRow>
-            <StyledResultNormalRow>
-              Netto mese:{" "}
-              {numberFormatter.format(outcomeAmounts.netAmount / 12)}
-            </StyledResultNormalRow>
-          </StyledResultContainer>
-        )}
-      </form>
+      {outcomeAmounts.netAmount > 0 && (
+        <StyledResultContainer>
+          <StyledResultNormalRow>
+            IRPEF: {numberFormatter.format(outcomeAmounts.taxAmount)}
+          </StyledResultNormalRow>
+          <StyledResultNormalRow>
+            INPS: {numberFormatter.format(outcomeAmounts.pensionAmount)}
+          </StyledResultNormalRow>
+          <StyledResultMainRow>
+            {t('result.netAmount')}: <b>{numberFormatter.format(outcomeAmounts.netAmount)}</b>
+          </StyledResultMainRow>
+          <StyledResultNormalRow>
+            {t('result.netAmountPerMonth')}:&nbsp;
+            {numberFormatter.format(outcomeAmounts.netAmount / 12)}
+          </StyledResultNormalRow>
+        </StyledResultContainer>
+      )}
     </StyledContainer>
   );
 }

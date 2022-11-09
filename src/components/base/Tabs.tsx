@@ -7,7 +7,7 @@
 //   <TabContent id="pizza">I don't like pizza</TabContent>
 // </Tabs>
 import { createContext, useContext, useState } from "react";
-import { StyledTabContainer, StyledTabButton, StyledTabContent } from "./styled/StyledTab"
+import { StyledTabContainer, StyledTabButton, StyledTabContent } from "../styled/StyledTab"
 
 const TabsContext = createContext<{
   activeTabId: string;

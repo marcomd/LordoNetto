@@ -10,15 +10,16 @@ const StyledContainer = styled.div`
 
 interface Props {
   mobile: boolean;
+  children: string;
 }
 
-export default function Header({ mobile }: Props) {
+export default function Header({ mobile, children }: Props) {
   return (
     <StyledContainer>
       {mobile ? (
-        <h1>Lordo ➟ Netto</h1>
+        <h1>{children}</h1>
       ) : (
-        <TitleCanvas>Lordo → Netto</TitleCanvas>
+        <TitleCanvas>{children}</TitleCanvas>
       )}
     </StyledContainer>
   );

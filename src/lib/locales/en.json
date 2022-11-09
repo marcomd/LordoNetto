@@ -1,0 +1,38 @@
+{
+  "app": {
+    "title": "Gross → Net",
+    "employee": {
+      "name": "Employee",
+      "title": "Net salary calculation"
+    },
+    "freelance": {
+      "name": "Freelancer",
+      "title": "Calculation of the balances of the first year of activity with vat registered for separate management INPS"
+    },
+    "company": {
+      "name": "Company",
+      "title": "Calculation net of IRAP and IRES"
+    },
+    "inputs": {
+      "placeholders": {
+        "grossAmount": "Gross",
+        "deductibleAmount": "Deductible expenses",
+        "salaryMonths": "Monthly payments",
+        "dependentSpouse": "Dependent spouse"
+      },
+      "errors": {
+        "grossAmountMissing": "Please enter the gross amount!",
+        "grossAmountNaN": "The gross amount must be a number!"
+      }
+    },
+    "result": {
+      "netAmount": "Net",
+      "netAmountPerMonth": "Net month",
+      "regionTaxAmount": "Region tax",
+      "cityTaxAmount": "City tax"
+    },
+    "footer": {
+      "tellAFriend": "Tell a friend"
+    }
+  }
+}

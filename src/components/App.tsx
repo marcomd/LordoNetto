@@ -1,29 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
-import styled from "styled-components";
 import { ErrorBoundary } from "react-error-boundary";
+import { GenericErrorFallback } from "./Errors";
 
+import { Tabs, TabLink, TabContent } from "./base/Tabs";
 import FreelanceForm from "./FreelanceForm";
 import CompanyForm from "./CompanyForm";
 import EmployeeForm from "./EmployeeForm";
-import { GenericErrorFallback } from "./Errors";
-import { Tabs, TabLink, TabContent } from "./Tabs";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
-//import Privacy from "./Privacy";
+import LocaleSelector from "./base/LocaleSelector";
+import { StyledApp } from "./styled/StyledApp";
 
-// --- STYLE ---
-const StyledApp = styled.div`
-  text-align: center;
-  padding: 0rem 2rem;
-  max-width: 700px;
-  margin: 0 auto;
+import { useTranslation } from "react-i18next";
 
-  @media only screen and (max-width: 550px) {
-    padding: 0rem 0.4rem;
-  }
-`;
-
-// --- CODE ---
 export default function App() {
   const media: MediaQueryList = useMemo(() => {
     return window.matchMedia("(max-width: 580px)")
@@ -39,25 +28,28 @@ export default function App() {
     return () => media.removeEventListener("change", (e) => setMobile(e.matches));
   }, []);
 
+  const { t } = useTranslation();
+
   return (
     <StyledApp>
-      <Header mobile={mobile} />
+      <Header mobile={mobile}>{t('title')}</Header>
       <ErrorBoundary FallbackComponent={GenericErrorFallback}>
+        <LocaleSelector />
         <Tabs defaults="employee">
-          <TabLink to="employee">Dipendente</TabLink>
-          <TabLink to="freelance">Professionista</TabLink>
-          <TabLink to="company">Azienda</TabLink>
+            <TabLink to="employee">{t('employee.name')}</TabLink>
+            <TabLink to="freelance">{t('freelance.name')}</TabLink>
+            <TabLink to="company">{t('company.name')}</TabLink>
 
-          <TabContent id="employee">
-            <EmployeeForm />
-          </TabContent>
-          <TabContent id="freelance">
-            <FreelanceForm />
-          </TabContent>
-          <TabContent id="company">
-            <CompanyForm />
-          </TabContent>
-        </Tabs>
+            <TabContent id="employee">
+              <EmployeeForm />
+            </TabContent>
+            <TabContent id="freelance">
+              <FreelanceForm />
+            </TabContent>
+            <TabContent id="company">
+              <CompanyForm />
+            </TabContent>
+          </Tabs>
       </ErrorBoundary>
       <Footer />
     </StyledApp>

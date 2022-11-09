@@ -14,7 +14,7 @@ function getRates(grossAmount: number) {
     { 
       amount: 15000, 
       percentage: 23, 
-      detractionNotOver: 1880 
+      detractionNotOver: 1880
     },
     { 
       amount: 13000, 

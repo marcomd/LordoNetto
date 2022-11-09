@@ -1,0 +1,38 @@
+{
+  "app": {
+    "title": "Lordo → Netto",
+    "employee": {
+      "name": "Dipendente",
+      "title": "Calcolo stipendio netto"
+    },
+    "freelance": {
+      "name": "Professionista",
+      "title": "Calcolo dei saldi del primo anno di attività con partita iva iscritto alla gestione separata INPS"
+    },
+    "company": {
+      "name": "Azienda",
+      "title": "Calcolo al netto di IRAP e IRES"
+    },
+    "inputs": {
+      "placeholders": {
+        "grossAmount": "Lordo",
+        "deductibleAmount": "Spese detraibili",
+        "salaryMonths": "Numero mensilità",
+        "dependentSpouse": "Coniuge a carico"
+      },
+      "errors": {
+        "grossAmountMissing": "Inserisci il reddito lordo!",
+        "grossAmountNaN": "The gross amount must be a number!"
+      }
+    },
+    "result": {
+      "netAmount": "Netto",
+      "netAmountPerMonth": "Netto mese",
+      "regionTaxAmount": "Addizionale regionale",
+      "cityTaxAmount": "Addizionale comunale"
+    },
+    "footer": {
+      "tellAFriend": "Passaparola"
+    }
+  }
+}

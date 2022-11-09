@@ -34,6 +34,8 @@ import {
   CoolSecondaryLink
 } from "../styled/StyledGlobal";
 
+import { useTranslation } from "react-i18next";
+
 const StyledContainer = styled.div`
   ${CommonSecondaryTextCss}
   text-align: center;
@@ -62,10 +64,11 @@ const tellAFriend = {
 const iconSize=32
 
 export default function Footer() {
+  const { t } = useTranslation();
 
   return (
     <StyledContainer>
-      <div>Tell a friend</div>
+      <div>{t('footer.tellAFriend')}</div>
       <StyledSocialRow>
         <WhatsappShareButton url={tellAFriend.url} title={tellAFriend.body}>
           <WhatsappIcon size={iconSize} round={true}/>
