@@ -37,6 +37,7 @@ const TabLink: React.FC<{
 
   function handleClick(): void {
     setActiveTabId(to);
+    // We have to wait the render of the content ends
     setTimeout(
       () =>
         document

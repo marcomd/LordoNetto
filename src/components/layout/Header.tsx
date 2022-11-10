@@ -1,6 +1,8 @@
+import { useContext } from "react";
 import styled from "styled-components";
 import TitleCanvas from "../TitleCanvas";
 import { CommonPrimaryTextCss } from "../styled/StyledGlobal";
+import { SharedContext } from "../../contexts/SharedContext";
 
 const StyledContainer = styled.div`
   ${CommonPrimaryTextCss}
@@ -9,11 +11,12 @@ const StyledContainer = styled.div`
 `;
 
 interface Props {
-  mobile: boolean;
   children: string;
 }
 
-export default function Header({ mobile, children }: Props) {
+export default function Header({ children }: Props) {
+  const { mobile } = useContext(SharedContext)
+
   return (
     <StyledContainer>
       {mobile ? (

@@ -1,5 +1,3 @@
-import { useTranslation } from "react-i18next";
-
 interface Parameters {
   grossAmount: number;
   deductibleAmount?: number;
