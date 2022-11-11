@@ -1,9 +1,10 @@
-import React, {
+import {
   useReducer,
   useState,
   useEffect,
   useCallback,
-  useRef
+  useRef,
+  useContext
 } from "react";
 import { calculateTaxes, TaxesOutcome } from "../lib/companyCalculation";
 import { numberFormatter } from "../lib/utility";
@@ -24,6 +25,7 @@ import {
 } from "./styled/StyledForm";
 
 import { useTranslation } from "react-i18next";
+import { SharedContext } from "../contexts/SharedContext";
 
 const initialAmounts: TaxesOutcome = {
   netAmount: 0,
@@ -38,6 +40,7 @@ export default function Form() {
   const refResult = useRef<HTMLInputElement>(null);
 
   const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
+  const { mobile } = useContext(SharedContext)
   const { t } = useTranslation();
 
   // useEffect(() => {
@@ -63,7 +66,7 @@ export default function Form() {
       iresAmount,
       irapAmount
     });
-    refResult.current?.scrollIntoView({ behavior: "smooth" });
+    mobile && refResult.current?.scrollIntoView({ behavior: "smooth" });
   }, [grossAmount, deductibleAmount]);
 
   useEffect(() => {

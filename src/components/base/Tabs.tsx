@@ -8,6 +8,7 @@
 // </Tabs>
 import { createContext, useContext, useState } from "react";
 import { StyledTabContainer, StyledTabButton, StyledTabContent } from "../styled/StyledTab"
+import { SharedContext } from "../../contexts/SharedContext";
 
 const TabsContext = createContext<{
   activeTabId: string;
@@ -34,16 +35,16 @@ const TabLink: React.FC<{
   to: string;
 }> = ({ children, to }) => {
   const { activeTabId, setActiveTabId } = useContext(TabsContext);
+  const { mobile } = useContext(SharedContext)
 
   function handleClick(): void {
     setActiveTabId(to);
     // We have to wait the render of the content ends
     setTimeout(
       () =>
-        document
-          .querySelector(`#${to}`)
-          ?.scrollIntoView({ behavior: "smooth" }),
-      400
+        mobile && document.querySelector(`#${to}`)
+                          ?.scrollIntoView({ behavior: "smooth" })
+      , 400
     );
   }
 
@@ -62,9 +63,8 @@ const TabContent: React.FC<{
   id: string;
 }> = ({ children, id }): JSX.Element | null => {
   const { activeTabId } = useContext(TabsContext);
-  if (activeTabId !== id) return null;
 
-  return <StyledTabContent id={id}>{children}</StyledTabContent>;
+  return <StyledTabContent id={id} className={activeTabId !== id ? "hidden" : ""}>{children}</StyledTabContent>;
 };
 
 export { Tabs, TabLink, TabContent };

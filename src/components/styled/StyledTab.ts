@@ -46,6 +46,10 @@ const StyledTabContent = styled.div`
 
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+
+  &.hidden {
+    display: none;
+  }
 `;
 
 export {

@@ -1,4 +1,4 @@
-import { useReducer, useState, useEffect, useRef } from "react";
+import { useReducer, useState, useEffect, useRef, useContext } from "react";
 import { calculateTaxes, TaxesOutcome } from "../lib/freelanceCalculation";
 import { numberFormatter } from "../lib/utility";
 import { DEBOUNCE_TIMEOUT } from "../lib/constants";
@@ -19,6 +19,7 @@ import {
 } from "./styled/StyledForm";
 
 import { useTranslation } from "react-i18next";
+import { SharedContext } from "../contexts/SharedContext";
 
 const initialAmounts: TaxesOutcome = {
   netAmount: 0,
@@ -33,6 +34,7 @@ export default function Form() {
   const refResult = useRef<HTMLInputElement>(null);
 
   const [errors, dispatchErrors] = useReducer(reducerErrors, initialErrors);
+  const { mobile } = useContext(SharedContext)
   const { t } = useTranslation();
 
   const calculate = (): void => {
@@ -51,7 +53,7 @@ export default function Form() {
       taxAmount,
       pensionAmount
     });
-    refResult.current?.scrollIntoView({ behavior: "smooth" });
+    mobile && refResult.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
